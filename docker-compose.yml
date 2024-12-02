@@ -14,7 +14,7 @@ services:
     container_name: django_backend
     build:
       context: ./django_backend
-    command: sh -c "python manage.py migrate && python manage.py runserver 0:80"
+    command: sh -c "python manage.py migrate && gunicorn main.wsgi:application --bind ${GUNICORN_HOST}:${GUNICORN_BASE_PORT} --reload"
     ports:
       - "${GUNICORN_PORTS}"
     volumes:
