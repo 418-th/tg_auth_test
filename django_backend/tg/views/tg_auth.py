@@ -42,7 +42,6 @@ class TgAuthAPIView(APIView):
             try:
                 user = User.objects.get(tg_auth_token=token)
             except User.DoesNotExist:
-                print('HUI')
                 return render(
                     request,
                     'auth.html',
