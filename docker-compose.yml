@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  django_backend:
+    container_name: django_backend
+    build:
+      context: ./django_backend
+    command: sh -c "python manage.py migrate && gunicorn main.wsgi:application --bind ${GUNICORN_HOST}:${GUNICORN_BASE_PORT} --reload"
+    ports:
+      - "${GUNICORN_PORTS}"
+    volumes:
+      - ./django_backend:/app
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  telegram_bot:
+    container_name: telegram_bot
+    build:
+      context: ./tg_bot
+    command: python main.py
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge
