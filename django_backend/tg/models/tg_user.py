@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser
 class TgUserManager(models.Manager):
 
     def get_or_create_user(self, data):
-        tg_id = data.get('tg_id')
+        tg_id = data.get('id')
         username = data.get('username')
         first_name = data.get('first_name')
         last_name = data.get('last_name')
@@ -19,7 +19,7 @@ class TgUserManager(models.Manager):
 
         token = secrets.token_urlsafe(16)
 
-        if user and not user.tg_auth_token:
+        if user:
             user.tg_auth_token = token
             user.save(update_fields=['tg_auth_token'])
 
@@ -31,9 +31,9 @@ class TgUserManager(models.Manager):
                 last_name=last_name,
                 tg_auth_token=token,
             )
-        return user
+        return user, token
 
-    def update_user(self, tg_id):
+    def update_token(self, tg_id):
         token = secrets.token_urlsafe(16)
         self.get_queryset().filter(tg_id=tg_id).update(tg_auth_token=token)
 

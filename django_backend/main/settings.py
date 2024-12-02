@@ -10,6 +10,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 INSTALLED_APPS += [
     'tg',
     'rest_framework',
+    'pytest',
 ]
 AUTH_USER_MODEL = 'tg.TgUser'
 

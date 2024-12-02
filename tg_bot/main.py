@@ -20,7 +20,7 @@ dp = Dispatcher()
 @dp.message(CommandStart)
 async def start_command(message: Message):
     payload = {
-        'tg_id': message.from_user.id,
+        'id': message.from_user.id,
         'username': message.from_user.username,
         'first_name': message.from_user.first_name,
         'last_name': message.from_user.last_name,
@@ -29,7 +29,9 @@ async def start_command(message: Message):
     async with aiohttp.ClientSession() as session:
         async with session.post(SERVER_URI, data=payload) as response:
             if response.status == 200:
-                await message.reply('Вы успешно авторизовались')
+                response_json = await response.json()
+                token = response_json.get('token')
+                await message.reply(f'Для завершения авторизации перейдите на страницу{SERVER_URI}?token={token}')
             else:
                 await message.reply(f'Ошибка авторизации {response.text}')
 
